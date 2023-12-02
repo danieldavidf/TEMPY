@@ -102,16 +102,19 @@ class Detector:
 	def conditional_logic_test(self, source, methods):
 		lista,occ = [],[]
 		for method in methods:
-			if (method.name!='setUp' and method.name!='tearDown' and not self.prefixed_with_assert(method)):
+			if (method.name!='setUp' and method.name!='tearDown' and method.name!='setUpClass' and method.name!='tearDownClass' and not self.prefixed_with_assert(method)):
 				for i in range( method.initial_line, method.final_line ):
 					#if(not source.empty[i] and (source.content[i].find("if(") != -1 or source.content[i].find("if ") != -1 or source.content[i].find("for ") != -1 or source.content[i].find("while ") != -1 or source.content[i].find("while ") != -1) and source.content[i][len(source.content[i])-2] == ':'):
 					if(not source.empty[i] and (
-						source.content[i].lstrip().find("if(") == 0 or source.content[i].lstrip().find("if ") == 0 or
-						source.content[i].lstrip().find("while(") == 0 or source.content[i].lstrip().find("while ") == 0 or
+						source.content[i].lstrip().find("if(") == 0 or 
+						source.content[i].lstrip().find("if ") == 0 or
+						source.content[i].lstrip().find("while(") == 0 or 
+						source.content[i].lstrip().find("while ") == 0 or
 						source.content[i].lstrip().find("for ") == 0 )):
 
 						if (len(self.how_many_assertions(source, method)) > 0 or self.prefixed_with_test(method)):
-							occ.append(i+1)
+							if(not self.containsSubTest(source,i)):
+								occ.append(i+1)
 				
 				if (len(occ) > 0):
 					for x in range(len(occ)):
@@ -119,6 +122,11 @@ class Detector:
 						self.add_test_smell_occurence( "Conditional Test Logic", method.name, lista)
 						lista.clear()
 					occ.clear()
+
+	def containsSubTest(self, source, i):
+		if(not source.empty[i+1] and (source.content[i+1].lstrip().find("subTest") == 0 )):
+			return True
+		return False
 
 
 	def redundant_print(self, source, methods):
