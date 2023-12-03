@@ -126,8 +126,11 @@ class Detector:
 					occ.clear()
 
 	def contains_subtest(self, source, i):
-		return (source.content[i+1].lstrip().find("subTest") != -1)
-
+		size = len(source.content)
+		if(size > i+1):
+			return (source.content[i+1].lstrip().find("subTest") != -1)
+		else:
+			return False
 
 	def redundant_print(self, source, methods):
 		lista,occ = [],[]

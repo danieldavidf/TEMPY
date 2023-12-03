@@ -38,7 +38,7 @@ class PythonParser:
 			print(e)
 			try:
 				self.ast_parser = False
-				self.file = open(path_testfile, 'r', encoding='utf-8')
+				self.file = open(path_testfile, 'r')
 				self.path_testfile = path_testfile
 				self.data = Data()
 				self.source = SourceCode()
@@ -119,7 +119,7 @@ class PythonParser:
 			elif (comentario and (line.find("\'\'\'") != -1 or line.find('\"\"\"') != -1)):
 				comentario = False
 				self.source.add_line(line,True, 0)
-			
+
 			# verify OPEN comment. type of comment: ''' [...] ''' or """ [...] """
 			elif (line.find("\'\'\'") != -1 or line.find('\"\"\"') != -1):
 				comentario = True
@@ -133,7 +133,7 @@ class PythonParser:
 
 				if (not comentario):
 					self.source.add_line(line, self.is_empty_line(line), self.count_indentations(line))
-							
+
 					if (len(line) > 6 and line.lstrip()[0]=='c' and line.lstrip()[1]=='l' and line.lstrip()[2]=='a' and line.lstrip()[3]=='s' and line.lstrip()[4]=='s' and line.lstrip()[5]==' '):
 						self.data.add_class( Classe( self.get_class_name_from_line(line.find("class "), line), number_of_line ) )
 						start_scope.append(number_of_line)
