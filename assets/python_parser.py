@@ -38,7 +38,7 @@ class PythonParser:
 			print(e)
 			try:
 				self.ast_parser = False
-				self.file = open(path_testfile, 'r')
+				self.file = open(path_testfile, 'r', encoding='utf-8')
 				self.path_testfile = path_testfile
 				self.data = Data()
 				self.source = SourceCode()

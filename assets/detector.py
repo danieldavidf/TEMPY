@@ -113,8 +113,10 @@ class Detector:
 						source.content[i].lstrip().find("for ") == 0 )):
 
 						if (len(self.how_many_assertions(source, method)) > 0 or self.prefixed_with_test(method)):
-							if(not self.containsSubTest(source,i)):
+							if(self.contains_subtest(source,i) == False):
 								occ.append(i+1)
+							else:
+								print('teste')
 				
 				if (len(occ) > 0):
 					for x in range(len(occ)):
@@ -123,10 +125,8 @@ class Detector:
 						lista.clear()
 					occ.clear()
 
-	def containsSubTest(self, source, i):
-		if(not source.empty[i+1] and (source.content[i+1].lstrip().find("subTest") == 0 )):
-			return True
-		return False
+	def contains_subtest(self, source, i):
+		return (source.content[i+1].lstrip().find("subTest") != -1)
 
 
 	def redundant_print(self, source, methods):
