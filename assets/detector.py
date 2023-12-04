@@ -114,8 +114,6 @@ class Detector:
 						if (len(self.how_many_assertions(source, method)) > 0 or self.prefixed_with_test(method)):
 							if(self.contains_subtest(source,i) == False):
 								occ.append(i+1)
-							else:
-								print('teste')
 				
 				if (len(occ) > 0):
 					for x in range(len(occ)):
