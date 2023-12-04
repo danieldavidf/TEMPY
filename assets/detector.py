@@ -107,7 +107,6 @@ class Detector:
 					#if(not source.empty[i] and (source.content[i].find("if(") != -1 or source.content[i].find("if ") != -1 or source.content[i].find("for ") != -1 or source.content[i].find("while ") != -1 or source.content[i].find("while ") != -1) and source.content[i][len(source.content[i])-2] == ':'):
 					if(not source.empty[i] and (
 						source.content[i].lstrip().find("if(") == 0 or 
-						source.content[i].lstrip().find("if ") == 0 or
 						source.content[i].lstrip().find("while(") == 0 or 
 						source.content[i].lstrip().find("while ") == 0 or
 						source.content[i].lstrip().find("for ") == 0 )):
