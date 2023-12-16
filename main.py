@@ -176,7 +176,7 @@ def search_test_file(tempdir):
 	for dirName, subdirList, fileList in os.walk(tempdir):
 		if( not is_hidden_directory(dirName) ):
 			for x in fileList:
-				if ( x.find( '.py' )!=-1 and x.find( 'main.py' )==-1):
+				if ( x.endswith( '.py' ) and x.find( 'main.py' )==-1):
 					if (is_test_file(x,dirName)):
 						number_of_files += 1
 						nomes.append(x)
