@@ -10,6 +10,7 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog
 from tkinter import messagebox
+from pathlib import Path
 
 def get_selected_test_file(lista):
 	if not lista.curselection():
@@ -39,20 +40,7 @@ def get_selected_test_file(lista):
 			ts_qtd.append( cont_proj )
 			cont_proj = 0
 
-		report = ReportGenerator()
-		report.add_header( cont_total, len(all_logs) , projects, ts_qtd)
-		prev = None
-		for index in range(len(all_logs)):		
-			report.add_table_header( projects[index], ts_qtd[index] )
-			for log in all_logs[index]:
-				if (log.lines == prev):
-					pass
-				else:
-					report.add_table_body( log.test_smell_type, log.method_name, log.lines )
-				prev = log.lines
-			report.add_table_close(ts_qtd[index])
-		report.add_footer()
-		report.build()
+		report_generator(cont_total, all_logs, projects, ts_qtd)
 
 		url = os.path.abspath("./report/log.html")
 		webbrowser.open(url,new=1)
@@ -83,20 +71,7 @@ def get_all_test_file(lista):
 			ts_qtd.append( cont_proj )
 			cont_proj = 0
 
-		report = ReportGenerator()
-		report.add_header( cont_total, len(all_logs) , projects, ts_qtd)
-		prev = None
-		for index in range(len(all_logs)):		
-			report.add_table_header( projects[index], ts_qtd[index] )
-			for log in all_logs[index]:
-				if (log.lines == prev):
-					pass
-				else:
-					report.add_table_body( log.test_smell_type, log.method_name, log.lines )
-				prev = log.lines
-			report.add_table_close(ts_qtd[index])
-		report.add_footer()
-		report.build()
+		report_generator(cont_total, all_logs, projects, ts_qtd)
 
 		url = os.path.abspath("./report/log.html")
 		webbrowser.open(url,new=1)
@@ -204,20 +179,7 @@ def select_file():
 			for x in log:
 				cont += 1
 
-		report = ReportGenerator()
-		report.add_header( cont, len(all_logs) , projects, ts_qtd)
-		prev = None
-		for index in range(len(all_logs)):			
-			report.add_table_header( projects[index], ts_qtd[index] )
-			for log in all_logs[index]:
-				if (log.lines == prev):
-					pass
-				else:
-					report.add_table_body( log.test_smell_type, log.method_name, log.lines )
-				prev = log.lines
-			report.add_table_close(ts_qtd[index])
-		report.add_footer()
-		report.build()
+		report_generator(cont, all_logs, projects, ts_qtd)
 
 		url = os.path.abspath("./report/log.html")
 		webbrowser.open(url,new=1)
@@ -225,6 +187,22 @@ def select_file():
 
 		if( not is_test_file(fname) ):
 			tkinter.messagebox.showwarning(title=None, message="The selected file is not a test file.")
+
+def report_generator(cont, all_logs, projects, ts_qtd):
+	report = ReportGenerator()
+	report.add_header( cont, len(all_logs) , projects, ts_qtd)
+	prev = None
+	for index in range(len(all_logs)):			
+		report.add_table_header( projects[index], ts_qtd[index] )
+		for log in all_logs[index]:
+			if (log.lines == prev):
+				pass
+			else:
+				report.add_table_body( log.test_smell_type, log.method_name, log.lines )
+			prev = log.lines
+		report.add_table_close(ts_qtd[index])
+	report.add_footer()
+	report.build()
 
 def select_directory():
 	currdir = os.getcwd()
@@ -256,7 +234,11 @@ def set_github_url():
 			except Exception as e:
 				tkinter.messagebox.showinfo(title=None, message='Project not found. Please check GitHub URL and try again.')
 
-		
+
+p = Path("./report/")
+if p.exists() == False:
+	os.mkdir("./report/")
+
 root = tk.Tk()
 root.resizable(width=False, height=False)
 root.wm_title("TS Automatic Detector for Python")
