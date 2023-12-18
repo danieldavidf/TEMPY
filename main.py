@@ -10,6 +10,7 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog
 from tkinter import messagebox
+from pathlib import Path
 
 def get_selected_test_file(lista):
 	if not lista.curselection():
@@ -256,7 +257,11 @@ def set_github_url():
 			except Exception as e:
 				tkinter.messagebox.showinfo(title=None, message='Project not found. Please check GitHub URL and try again.')
 
-		
+
+p = Path("./report/")
+if p.exists() == False:
+	os.mkdir("./report/")
+
 root = tk.Tk()
 root.resizable(width=False, height=False)
 root.wm_title("TS Automatic Detector for Python")
