@@ -29,6 +29,8 @@ class ReportGenerator:
 </style>
 </head>
 <body>
+
+<a href="log.csv">Download CSV</a>
 		
 <h1>Test Smells Analysis</h1>
 

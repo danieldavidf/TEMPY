@@ -5,6 +5,7 @@ from components import SourceCode, Method, Classe, Data
 from python_parser import *
 from detector import *
 from report_generator import *
+from report_generator_csv import *
 
 import tkinter as tk
 from tkinter import ttk
@@ -12,7 +13,7 @@ import tkinter.filedialog
 from tkinter import messagebox
 from pathlib import Path
 
-def get_selected_test_file(lista):
+def get_selected_test_file(lista, tempdir):
 	if not lista.curselection():
 		tkinter.messagebox.showwarning(title=None, message="Please select a test file from the list for analysis.")
 	else:
@@ -41,12 +42,13 @@ def get_selected_test_file(lista):
 			cont_proj = 0
 
 		report_generator(cont_total, all_logs, projects, ts_qtd)
+		report_generator_csv(all_logs,projects,tempdir)
 
 		url = os.path.abspath("./report/log.html")
 		webbrowser.open(url,new=1)
 		# sys.exit(0)
 
-def get_all_test_file(lista):
+def get_all_test_file(lista, tempdir):
 	if (tkinter.messagebox.askokcancel(title=None, message=str( lista.size() )+" test file(s) selected. Do you wish to continue?")):
 
 		all_logs, projects = [], []
@@ -72,6 +74,7 @@ def get_all_test_file(lista):
 			cont_proj = 0
 
 		report_generator(cont_total, all_logs, projects, ts_qtd)
+		report_generator_csv(all_logs,projects,tempdir)
 
 		url = os.path.abspath("./report/log.html")
 		webbrowser.open(url,new=1)
@@ -86,7 +89,7 @@ def close_window_confirmation(newWindow):
     if (tkinter.messagebox.askokcancel(title=None, message="Do you really want to close this window?")):
     	close_window(newWindow)
 
-def test_file_selection_window(nomes,paths):
+def test_file_selection_window(nomes,paths,tempdir):
 	newWindow = tk.Tk()
 	newWindow.protocol('WM_DELETE_WINDOW', lambda: close_window_confirmation(newWindow))
 	newWindow.wm_title("Select a Python test file")
@@ -107,20 +110,20 @@ def test_file_selection_window(nomes,paths):
 	for x in range(0,len(nomes)):
 		lista.insert(x, paths[x]+'/'+nomes[x])
 
-	btn1 = tk.Button(newWindow, text='Select', command=lambda: get_selected_test_file(lista)).pack(fill=tk.X)
-	btn2 = tk.Button(newWindow, text='Select All', command=lambda: get_all_test_file(lista)).pack(fill=tk.X)
+	btn1 = tk.Button(newWindow, text='Select', command=lambda: get_selected_test_file(lista, tempdir)).pack(fill=tk.X)
+	btn2 = tk.Button(newWindow, text='Select All', command=lambda: get_all_test_file(lista,tempdir)).pack(fill=tk.X)
 	btn3 = tk.Button(newWindow, text='Cancel', command=lambda: close_window(newWindow)).pack(fill=tk.X)
 
-def generate_test_file_list_log(files,nomes,paths):
+def generate_test_file_list_log(files,nomes,paths, tempdir):
 	if (files > 1):
 		tkinter.messagebox.showinfo(title=None, message=str(files) + ' Python test files found.')
 		root.withdraw() # hide home screen
-		test_file_selection_window(nomes,paths)
+		test_file_selection_window(nomes,paths,tempdir)
 
 	elif (files == 1):
 		tkinter.messagebox.showinfo(title=None, message='1 Python test file found.')
 		root.withdraw() # hide home screen
-		test_file_selection_window(nomes,paths)
+		test_file_selection_window(nomes,paths,tempdir)
 	else:
 		tkinter.messagebox.showinfo(title=None, message='No Python test file found.')
 
@@ -157,7 +160,7 @@ def search_test_file(tempdir):
 						nomes.append(x)
 						paths.append(dirName)
 
-	generate_test_file_list_log(number_of_files,nomes,paths)
+	generate_test_file_list_log(number_of_files,nomes,paths,tempdir)
 
 def select_file():
 	fname = tk.filedialog.askopenfilename(filetypes=[("Python files", ".py")],title='Choose a test file')
@@ -203,6 +206,19 @@ def report_generator(cont, all_logs, projects, ts_qtd):
 		report.add_table_close(ts_qtd[index])
 	report.add_footer()
 	report.build()
+
+def report_generator_csv(all_logs, projects, tempdir):
+	report2 = ReportGeneratorCSV(tempdir)
+	prev2 = None
+	for index2 in range(len(all_logs)):
+		for log2 in all_logs[index2]:
+			if log2.lines == prev2:
+				pass
+			else:
+				report2.add_csv_body(log2.test_smell_type, log2.method_name, log2.lines, projects[index2])
+			prev2 = log2.lines
+	report2.build()
+	return report2.get_file_name()
 
 def select_directory():
 	currdir = os.getcwd()
